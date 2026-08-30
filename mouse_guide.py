@@ -87,7 +87,9 @@ class MouseGuide:
 mouse_guide = MouseGuide(500, 500)
 
 mod = Module()
+mod.tag('mouse_guide_showing', desc='Tag indicates whether the mouse guide is showing')
 mod.list('mouse_cardinal', desc='cardinal directions for relative mouse movement')
+ctx = Context()
 
 def parse_cardinal(direction: str, distance: int) -> Tuple[bool, int]:
     x, y = ctrl.mouse_pos()
@@ -112,14 +114,17 @@ class Actions:
     def mouse_guide_enable():
         """Enable relative mouse guide"""
         mouse_guide.enable()
+        ctx.tags = ['user.mouse_guide_showing']
 
     def mouse_guide_disable():
         """Disable relative mouse guide"""
         mouse_guide.disable()
+        ctx.tags = []
 
     def mouse_guide_toggle():
         """Toggle relative mouse guide"""
         mouse_guide.toggle()
+        ctx.tags = ['user.mouse_guide_showing'] if mouse_guide.enabled else []
 
     def mouse_cardinal(direction: str, distance: int) -> int:
         """Translate the current mouse position using a cardinal direction and a distance"""
@@ -147,7 +152,6 @@ class Actions:
             y, x = x, y
         ctrl.mouse_move(x, y)
 
-ctx = Context()
 ctx.lists['user.mouse_cardinal'] = [
     'up', 'left', 'down', 'right',
     'major up', 'major left', 'major down', 'major right',
